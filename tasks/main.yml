@@ -1,36 +1,36 @@
 ---
 - name: write etc default file
   template:
-    src={{ modcloth_app_etc_default_template }}
-    dest=/etc/default/{{ modcloth_app_name }}
+    src={{ hi_app_etc_default_template }}
+    dest=/etc/default/{{ hi_app_name }}
     owner=root group=root mode=0644
-  when: modcloth_app_etc_default_template != ""
-  register: modcloth_app_write_etc_default_file
+  when: hi_app_etc_default_template != ""
+  register: hi_app_write_etc_default_file
 
 - name: pull container
   docker_pull:
-    repo={{ modcloth_app_docker_repo }}
-    tag={{ modcloth_app_docker_tag }}
-  when: modcloth_app_docker_repo != ""
-  register: modcloth_app_pull_container
+    repo={{ hi_app_docker_repo }}
+    tag={{ hi_app_docker_tag }}
+  when: hi_app_docker_repo != ""
+  register: hi_app_pull_container
 
 - include: cron.yml
-  when: modcloth_app_type == "cron"
-  register: modcloth_app_type_cron
+  when: hi_app_type == "cron"
+  register: hi_app_type_cron
 
 - include: long-running.yml
-  when: modcloth_app_type == "long-running"
-  register: modcloth_app_type_long_running
+  when: hi_app_type == "long-running"
+  register: hi_app_type_long_running
 
 - name: notify new relic deploy complete
   sudo: false
   newrelic_deployment:
     token="{{new_relic_api_token}}"
-    app_name="{{modcloth_app_new_relic_app_name}}"
-    revision="{{modcloth_app_docker_tag}}"
-    user="{{modcloth_app_deployer}}"
-  when: modcloth_app_notify_new_relic|bool and
-        modcloth_app_new_relic_app_name != "" and
+    app_name="{{hi_app_new_relic_app_name}}"
+    revision="{{hi_app_docker_tag}}"
+    user="{{hi_app_deployer}}"
+  when: hi_app_notify_new_relic|bool and
+        hi_app_new_relic_app_name != "" and
         new_relic_api_token != ""
   ignore_errors: True
   run_once: yes

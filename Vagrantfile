@@ -4,7 +4,7 @@ dockercfg = File.expand_path('~/.dockercfg')
 FileUtils.cp(dockercfg, './.dockercfg') if File.exists?(dockercfg)
 
 Vagrant.configure('2') do |config|
-  config.vm.box = 'modcloth/trusty64'
+  config.vm.box = 'hi/trusty64'
 
   config.vm.provision 'shell', path: '.vagrant-pre-provision.sh'
   config.vm.provision 'ansible' do |ansible|
