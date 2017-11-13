@@ -2,22 +2,22 @@
 # {{ ansible_managed }}
 set -e
 
-{% for volume in modcloth_app_docker_volumes -%}
+{% for volume in hi_app_docker_volumes -%}
 {% if volume.directory is defined and volume.directory %} mkdir -p {{ volume.host }} {% endif %}
 {% endfor %}
 
-docker stop {{ modcloth_app_name }} >/dev/null 2>&1 || true
-docker rm -f {{ modcloth_app_name }} >/dev/null 2>&1 || true
+docker stop {{ hi_app_name }} >/dev/null 2>&1 || true
+docker rm -f {{ hi_app_name }} >/dev/null 2>&1 || true
 
-{% if modcloth_app_cron_stdin_command %} {{ modcloth_app_cron_stdin_command  }} | {% endif %} exec docker run \
-  --env-file /etc/default/{{ modcloth_app_name }} \
-  --name {{ modcloth_app_name }} \
+{% if hi_app_cron_stdin_command %} {{ hi_app_cron_stdin_command  }} | {% endif %} exec docker run \
+  --env-file /etc/default/{{ hi_app_name }} \
+  --name {{ hi_app_name }} \
   -i \
   --rm \
-  {% for volume in modcloth_app_docker_volumes -%}
+  {% for volume in hi_app_docker_volumes -%}
   -v {{ volume.host }}:{{ volume.container }}:{{ volume.permissions | default("rw") }} \
   {% endfor %}
-  {{ modcloth_app_docker_repo }}:{{ modcloth_app_docker_tag }} \
-  {{ modcloth_app_docker_command }} \
-  >> /var/log/{{ modcloth_app_name }}.log \
-  2>> /var/log/{{ modcloth_app_name }}.err
+  {{ hi_app_docker_repo }}:{{ hi_app_docker_tag }} \
+  {{ hi_app_docker_command }} \
+  >> /var/log/{{ hi_app_name }}.log \
+  2>> /var/log/{{ hi_app_name }}.err

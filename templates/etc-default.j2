@@ -1,5 +1,5 @@
 # vim:filetype=sh
 # {{ ansible_managed }}
 
-{% for key, value in modcloth_app_env|dictsort %}{{ key }}={{ value | default('', true) }}
+{% for key, value in hi_app_env|dictsort %}{{ key }}={{ value | default('', true) }}
 {% endfor %}

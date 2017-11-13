@@ -1,19 +1,27 @@
 ---
-- name: write upstart conf
+- name: write systemd conf
   template:
-    src={{ modcloth_app_upstart_conf_template }}
-    dest=/etc/init/{{ modcloth_app_name }}.conf
-    owner=root group=root mode=0644
-  when: modcloth_app_upstart_conf_template != ""
-  register: modcloth_app_write_upstart_conf
+    src: "{{ hi_app_systemd_conf_template }}"
+    dest: /lib/systemd/system/{{ hi_app_name }}.service
+    owner: root
+    group: root
+    mode: 0644
+  when: hi_app_systemd_conf_template != ""
+  register: hi_app_write_systemd_conf
 
-- name: stop app
-  service: name={{ modcloth_app_name }} state=restarted
-  when: modcloth_app_write_upstart_conf.changed
-        or modcloth_app_write_etc_default_file.changed
-        or modcloth_app_pull_container.changed
+- name: restart app
+  systemd:
+    name: "{{ hi_app_name }}"
+    state: restarted
+    daemon_reload: yes
+  when: hi_app_write_systemd_conf.changed
+        or hi_app_write_etc_default_file.changed
+        or hi_app_pull_container.changed
 
-- name: start app
-  service: name={{ modcloth_app_name }} state=started
+- name: ensure app started
+  systemd:
+    name: "{{ hi_app_name }}"
+    state: started
+    enabled: true
 
-- include: wait-healthcheck.yml
+- include_tasks: wait-healthcheck.yml

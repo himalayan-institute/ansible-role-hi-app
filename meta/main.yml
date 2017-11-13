@@ -1,27 +1,13 @@
 ---
 galaxy_info:
-  author: Dan Buch
-  description: 
-  company: ModCloth, Inc.
+  author: Rafe Colton
+  description: Installing docker apps and running them with systemd.
+  company: Himalayan Institute
   license: MIT
-  min_ansible_version: 1.2
+  min_ansible_version: 2.4.1
   platforms:
   - name: Ubuntu
     versions:
-    - precise
-    - trusty
+    - xenial
   categories:
   - web
-dependencies:
-- role: modcloth.rsyslog-file
-  service: "{{modcloth_app_name}}"
-  files:
-  - { tag: '{{modcloth_app_name}}', name: '/var/log/upstart/{{modcloth_app_name}}.err'}
-  - { tag: '{{modcloth_app_name}}', name: '/var/log/upstart/{{modcloth_app_name}}.log'}
-  when: modcloth_app_type == "long-running" and modcloth_app_ship_logs|bool
-- role: modcloth.rsyslog-file
-  service: "{{modcloth_app_name}}"
-  files:
-  - { tag: '{{modcloth_app_name}}', name: '/var/log/{{modcloth_app_name}}.err'}
-  - { tag: '{{modcloth_app_name}}', name: '/var/log/{{modcloth_app_name}}.log'}
-  when: modcloth_app_type == "cron" and modcloth_app_ship_logs|bool

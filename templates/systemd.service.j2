@@ -1,0 +1,46 @@
+# vim:filetype=systemd
+# {{ ansible_managed }}
+[Unit]
+Description="{{ hi_app_name }}"
+After=docker.service
+Requires=docker.service
+{% for dep in hi_app_systemd_dependencies -%}
+After={{ dep }}.service
+Requires={{ dep }}.service
+{% endfor -%}
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=/etc/default/{{ hi_app_name }}
+ExecStartPre=-/usr/bin/docker kill {{ hi_app_name }}
+ExecStartPre=-/usr/bin/docker rm -f {{ hi_app_name }}
+ExecStartPre=/bin/bash -c 'docker images | grep {{ hi_app_docker_repo }} | grep -q {{ hi_app_docker_tag }} || /usr/bin/docker pull {{ hi_app_docker_repo }}:{{ hi_app_docker_tag }}'
+{% if hi_app_reload_cmd is defined and hi_app_reload_cmd != "" -%}
+ExecReload={{ hi_app_reload_cmd }}
+{% endif -%}
+{% for volume in hi_app_docker_volumes -%}
+  {% if volume.directory is defined and volume.directory -%}
+ExecStartPro=mkdir -p {{ volume.host }}
+  {% endif -%}
+{% endfor -%}
+ExecStart=/usr/bin/docker run --rm \
+          --name {{ hi_app_name }} \
+          --env-file /etc/default/{{ hi_app_name }} \
+          {% for volume in hi_app_docker_volumes -%}
+          -v {{ volume.host }}:{{ volume.container }}:{{ volume.permissions | default("rw") }} \
+          {% endfor -%}
+          {% if hi_app_docker_port is iterable and hi_app_docker_port is not string -%}
+          {% for port in hi_app_docker_port -%}
+          -p {{ port.ip | default("") }}{% if port.ip is defined %}:{% endif %}{{ port.host | default("") }}{% if port.host is defined %}:{% endif %}{{ port.container }} \
+          {% endfor -%}
+          {% else -%}
+          -p {{ hi_app_docker_port }}:{{ hi_app_docker_port }} \
+          {% endif -%}
+          {% for link in hi_app_docker_link -%}
+          --link {{ link.name }}:{{ link.alias | default(link.name) }} \
+          {% endfor -%}
+          {{ hi_app_docker_repo }}:{{ hi_app_docker_tag }} {{ hi_app_docker_command }}
+
+[Install]
+WantedBy=multi-user.target

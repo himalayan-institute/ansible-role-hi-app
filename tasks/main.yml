@@ -1,36 +1,42 @@
 ---
 - name: write etc default file
   template:
-    src={{ modcloth_app_etc_default_template }}
-    dest=/etc/default/{{ modcloth_app_name }}
-    owner=root group=root mode=0644
-  when: modcloth_app_etc_default_template != ""
-  register: modcloth_app_write_etc_default_file
+    src: "{{ hi_app_etc_default_template }}"
+    dest: /etc/default/{{ hi_app_name }}
+    owner: root
+    group: root
+    mode: 0644
+  when: hi_app_etc_default_template != ""
+  register: hi_app_write_etc_default_file
+
+- name: install docker-py and dependencies on host
+  pip:
+    name: "{{ item }}"
+    executable: /usr/bin/pip
+  with_items:
+    - docker-py
+    - requests
+
+- name: docker login
+  docker_login:
+    username: "{{ hi_app_docker_registry.username }}"
+    password: "{{ hi_app_docker_registry.password }}"
+    registry: "{{ hi_app_docker_registry.registry }}"
+    email: "{{ hi_app_docker_registry.email }}"
+  changed_when: false
 
 - name: pull container
-  docker_pull:
-    repo={{ modcloth_app_docker_repo }}
-    tag={{ modcloth_app_docker_tag }}
-  when: modcloth_app_docker_repo != ""
-  register: modcloth_app_pull_container
+  docker_image:
+    name: "{{ hi_app_docker_repo }}:{{ hi_app_docker_tag }}"
+    state: present
+    force: yes
+  when: hi_app_docker_repo != "" and hi_app_docker_tag != ""
+  register: hi_app_pull_container
 
-- include: cron.yml
-  when: modcloth_app_type == "cron"
-  register: modcloth_app_type_cron
+- include_tasks: cron.yml
+  when: hi_app_type == "cron"
+  register: hi_app_type_cron
 
-- include: long-running.yml
-  when: modcloth_app_type == "long-running"
-  register: modcloth_app_type_long_running
-
-- name: notify new relic deploy complete
-  sudo: false
-  newrelic_deployment:
-    token="{{new_relic_api_token}}"
-    app_name="{{modcloth_app_new_relic_app_name}}"
-    revision="{{modcloth_app_docker_tag}}"
-    user="{{modcloth_app_deployer}}"
-  when: modcloth_app_notify_new_relic|bool and
-        modcloth_app_new_relic_app_name != "" and
-        new_relic_api_token != ""
-  ignore_errors: True
-  run_once: yes
+- include_tasks: long-running.yml
+  when: hi_app_type == "long-running"
+  register: hi_app_type_long_running
