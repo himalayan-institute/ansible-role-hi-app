@@ -23,9 +23,6 @@ hi_app_docker_command: ""
 # "quay.io/hi/foo"
 hi_app_docker_repo: ""
 
-# Github repository slug, e.g. "owner/foo"
-hi_app_github_repo: ""
-
 # Tag portion of docker image specification, e.g.: "latest", "master"
 hi_app_docker_tag: latest
 

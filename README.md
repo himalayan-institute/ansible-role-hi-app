@@ -14,7 +14,7 @@ hi_app_name: app
 # 'cron' should be used for applications that should run on a schedule (e.g. a rake task)
 #   A cron entry will be inserted to run this task (as root)
 # 'long-running' should be used for applications that behave as services and should always be up
-#   An upstart job will be created to run your service (as root)
+#   A systemd job will be created to run your service (as root)
 hi_app_type: long-running
 
 # Environment variable mapping written to /etc/default/{{ hi_app_name }}
@@ -71,14 +71,19 @@ hi_app_cron_stdin_command: ""
 # with logrotated
 hi_app_cron_logrotate_template: cron-logrotate.j2
 
-# additional conditions on the upstart service
-hi_app_upstart_start_condition: ""
+# additional conditions on the systemd service
+hi_app_systemd_dependencies: []
 
 # Template used for the file written to /etc/init/{{ hi_app_name }}.conf
-hi_app_upstart_conf_template: upstart.conf.j2
+hi_app_systemd_conf_template: systemd.service.j2
+
+# Name of the organism running the playbook
+hi_app_deployer: ""
 
 # enable healthchecking after a restart
 hi_app_healthcheck_enabled: false
+
+hi_app_healthcheck_validate_certs: yes
 
 # defaults for the healthcheck url
 hi_app_healthcheck_scheme: "http"
