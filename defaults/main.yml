@@ -6,7 +6,7 @@ hi_app_name: app
 # 'cron' should be used for applications that should run on a schedule (e.g. a rake task)
 #   A cron entry will be inserted to run this task (as root)
 # 'long-running' should be used for applications that behave as services and should always be up
-#   An upstart job will be created to run your service (as root)
+#   A systemd job will be created to run your service (as root)
 hi_app_type: long-running
 
 # Environment variable mapping written to /etc/default/{{ hi_app_name }}
@@ -66,23 +66,19 @@ hi_app_cron_stdin_command: ""
 # with logrotated
 hi_app_cron_logrotate_template: cron-logrotate.j2
 
-# additional conditions on the upstart service
-hi_app_upstart_start_condition: ""
+# additional conditions on the systemd service
+hi_app_systemd_dependencies: []
 
 # Template used for the file written to /etc/init/{{ hi_app_name }}.conf
-hi_app_upstart_conf_template: upstart.conf.j2
+hi_app_systemd_conf_template: systemd.service.j2
 
 # Name of the organism running the playbook
 hi_app_deployer: ""
 
-# Name of the application in NewRelic (for deployment notifications)
-hi_app_new_relic_app_name: "[{{env}}] {{hi_app_name}}"
-
-# Whether to notify NewRelic of app deployments
-hi_app_notify_new_relic: false
-
 # enable healthchecking after a restart
 hi_app_healthcheck_enabled: false
+
+hi_app_healthcheck_validate_certs: yes
 
 # defaults for the healthcheck url
 hi_app_healthcheck_scheme: "http"
@@ -93,8 +89,3 @@ hi_app_healthcheck_url: "{{ hi_app_healthcheck_scheme }}://{{ hi_app_healthcheck
 hi_app_healthcheck_timeout: 1
 hi_app_healthcheck_delay: 1
 # hi_app_healthcheck_retries: 30 # currently not configurable due to https://github.com/ansible/ansible/issues/5865
-
-# External dependency variables
-
-# NewRelic API token (for deployment notifications)
-new_relic_api_token: ""

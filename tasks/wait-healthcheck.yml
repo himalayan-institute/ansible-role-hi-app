@@ -1,12 +1,15 @@
 ---
 - name: install pip package required for uri module
-  pip: name=httplib2 state=present
+  pip:
+    name: httplib2
+    state: present
   when: hi_app_healthcheck_enabled|bool
 
 - name: await healthy
   uri:
     url: "{{ hi_app_healthcheck_url }}"
     timeout: "{{ hi_app_healthcheck_timeout }}"
+    validate_certs: "{{ hi_app_healthcheck_validate_certs|bool }}"
   register: result
   retries: 30 # currently not configurable due to https://github.com/ansible/ansible/issues/5865
   delay:  "{{ hi_app_healthcheck_delay|int }}"

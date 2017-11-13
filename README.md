@@ -74,14 +74,8 @@ hi_app_cron_logrotate_template: cron-logrotate.j2
 # additional conditions on the upstart service
 hi_app_upstart_start_condition: ""
 
-# Name of the application in NewRelic (for deployment notifications)
-hi_app_new_relic_app_name: "[{{env}}] {{hi_app_name}}"
-
 # Template used for the file written to /etc/init/{{ hi_app_name }}.conf
 hi_app_upstart_conf_template: upstart.conf.j2
-
-# Whether to notify NewRelic of app deployments
-hi_app_notify_new_relic: false
 
 # enable healthchecking after a restart
 hi_app_healthcheck_enabled: false
@@ -95,14 +89,6 @@ hi_app_healthcheck_url: "{{ hi_app_healthcheck_scheme }}://{{ hi_app_healthcheck
 hi_app_healthcheck_timeout: 1
 hi_app_healthcheck_delay: 1
 # hi_app_healthcheck_retries: 30 # currently not configurable due to https://github.com/ansible/ansible/issues/5865
-```
-
-## External Dependency Variables
-
-```yaml
----
-# NewRelic API token (for deployment notifications)
-new_relic_api_token: "{{ new_relic_api_token | default('') }}"
 ```
 
 ## License

@@ -1,36 +1,41 @@
 ---
 - name: write etc default file
   template:
-    src={{ hi_app_etc_default_template }}
-    dest=/etc/default/{{ hi_app_name }}
-    owner=root group=root mode=0644
+    src: "{{ hi_app_etc_default_template }}"
+    dest: /etc/default/{{ hi_app_name }}
+    owner: root
+    group: root
+    mode: 0644
   when: hi_app_etc_default_template != ""
   register: hi_app_write_etc_default_file
 
+- name: install docker-py and dependencies on host
+  pip:
+    name: "{{ item }}"
+    executable: /usr/bin/pip
+  with_items:
+    - docker-py
+    - requests
+
+- name: docker login
+  docker_login:
+    username: "{{ hi_app_docker_registry.username }}"
+    password: "{{ hi_app_docker_registry.password }}"
+    registry: "{{ hi_app_docker_registry.registry }}"
+    email: "{{ hi_app_docker_registry.email }}"
+  changed_when: false
+
 - name: pull container
-  docker_pull:
-    repo={{ hi_app_docker_repo }}
-    tag={{ hi_app_docker_tag }}
-  when: hi_app_docker_repo != ""
+  docker_image:
+    name: "{{ hi_app_docker_repo }}:{{ hi_app_docker_tag }}"
+    state: present
+  when: hi_app_docker_repo != "" and hi_app_docker_tag != ""
   register: hi_app_pull_container
 
-- include: cron.yml
+- include_tasks: cron.yml
   when: hi_app_type == "cron"
   register: hi_app_type_cron
 
-- include: long-running.yml
+- include_tasks: long-running.yml
   when: hi_app_type == "long-running"
   register: hi_app_type_long_running
-
-- name: notify new relic deploy complete
-  sudo: false
-  newrelic_deployment:
-    token="{{new_relic_api_token}}"
-    app_name="{{hi_app_new_relic_app_name}}"
-    revision="{{hi_app_docker_tag}}"
-    user="{{hi_app_deployer}}"
-  when: hi_app_notify_new_relic|bool and
-        hi_app_new_relic_app_name != "" and
-        new_relic_api_token != ""
-  ignore_errors: True
-  run_once: yes
