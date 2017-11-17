@@ -40,6 +40,9 @@ ExecStart=/usr/bin/docker run --rm \
           {% for link in hi_app_docker_link -%}
           --link {{ link.name }}:{{ link.alias | default(link.name) }} \
           {% endfor -%}
+          {% for cap in hi_app_docker_caps -%}
+          --cap-add {{ cap }} \
+          {% endfor -%}
           {{ hi_app_docker_repo }}:{{ hi_app_docker_tag }} {{ hi_app_docker_command }}
 
 [Install]
