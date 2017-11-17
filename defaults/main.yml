@@ -26,6 +26,9 @@ hi_app_docker_repo: ""
 # Tag portion of docker image specification, e.g.: "latest", "master"
 hi_app_docker_tag: latest
 
+# force docker pull to run even if an image with the specified name and tag already exists
+hi_app_docker_force_pull: true
+
 # Proxy port for docker container, passed via `-p` to `docker run`
 hi_app_docker_port: 3000
 # Also valid:

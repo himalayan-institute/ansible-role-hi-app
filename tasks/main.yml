@@ -29,7 +29,7 @@
   docker_image:
     name: "{{ hi_app_docker_repo }}:{{ hi_app_docker_tag }}"
     state: present
-    force: yes
+    force: "{{ hi_app_docker_force_pull }}"
   when: hi_app_docker_repo != "" and hi_app_docker_tag != ""
   register: hi_app_pull_container
 
