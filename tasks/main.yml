@@ -11,11 +11,8 @@
 
 - name: install docker-py and dependencies on host
   pip:
-    name: "{{ item }}"
-    executable: /usr/bin/pip
-  with_items:
-    - docker-py
-    - requests
+    name: docker-py requests
+    executable: "{{ hi_app_pip_location }}"
 
 - name: docker login
   docker_login:
