@@ -54,6 +54,9 @@ hi_app_docker_link: []
 # - { name: style-gallery, alias: style-gallery }
 # # note: alias, if not provided, defaults to the same value as name
 
+# additional docker capabilities - added with `--cap-add`
+hi_app_docker_caps: []
+
 # Cron job schedule
 hi_app_cron_schedule: "* * * * *"
 
