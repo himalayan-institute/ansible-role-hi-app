@@ -10,6 +10,8 @@
     url: "{{ hi_app_healthcheck_url }}"
     timeout: "{{ hi_app_healthcheck_timeout }}"
     validate_certs: "{{ hi_app_healthcheck_validate_certs|bool }}"
+    client_key: "{{ hi_app_healthcheck_key | default('') }}"
+    client_cert: "{{ hi_app_healthcheck_cert | default('') }}"
   register: result
   retries: 30 # currently not configurable due to https://github.com/ansible/ansible/issues/5865
   delay:  "{{ hi_app_healthcheck_delay|int }}"
