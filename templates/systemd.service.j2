@@ -43,6 +43,10 @@ ExecStart=/usr/bin/docker run --rm \
           {% for cap in hi_app_docker_caps -%}
           --cap-add {{ cap }} \
           {% endfor -%}
+          {% for arg in hi_app_docker_args -%}
+          {{ arg }} \
+          {% endfor -%}
+
           {{ hi_app_docker_repo }}:{{ hi_app_docker_tag }} {{ hi_app_docker_command }}
 
 [Install]
