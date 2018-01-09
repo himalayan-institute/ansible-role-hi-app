@@ -57,6 +57,9 @@ hi_app_docker_link: []
 # additional docker capabilities - added with `--cap-add`
 hi_app_docker_caps: []
 
+# default additional docker arguments
+hi_app_docker_args: []
+
 # Cron job schedule
 hi_app_cron_schedule: "* * * * *"
 
