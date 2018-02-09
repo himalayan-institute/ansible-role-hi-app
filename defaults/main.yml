@@ -96,5 +96,6 @@ hi_app_healthcheck_path: "heartbeat"
 hi_app_healthcheck_host: "{{ ansible_fqdn }}"
 hi_app_healthcheck_url: "{{ hi_app_healthcheck_scheme }}://{{ hi_app_healthcheck_host }}:{{ hi_app_healthcheck_port }}/{{ hi_app_healthcheck_path }}"
 hi_app_healthcheck_timeout: 1
+hi_app_healthcheck_retries: 60
 hi_app_healthcheck_delay: 1
 # hi_app_healthcheck_retries: 30 # currently not configurable due to https://github.com/ansible/ansible/issues/5865
