@@ -9,9 +9,11 @@
   when: hi_app_etc_default_template != ""
   register: hi_app_write_etc_default_file
 
-- name: install docker-py and dependencies on host
+- name: install docker-py and requests on host
   pip:
-    name: docker-py requests
+    name:
+      - docker-py
+      - requests
     executable: "{{ hi_app_pip_location }}"
 
 - name: docker login
